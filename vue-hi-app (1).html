@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motivational App</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.3.4/vue.global.prod.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', 'Arial', sans-serif;
+            background: #ffffff;
+            min-height: 100vh;
+            padding: 2rem;
+            transition: background 0.3s ease;
+        }
+        body.dark-mode {
+            background: #202124;
+        }
+        #app {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .dark-mode-toggle {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 1.5rem auto 2rem;
+            width: fit-content;
+        }
+        .toggle-label {
+            font-size: 0.75rem;
+            color: #5f6368;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            text-align: center;
+        }
+        .dark-mode .toggle-label {
+            color: #9aa0a6;
+        }
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 34px;
+            background: #dadce0;
+            border-radius: 34px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            border: none;
+            padding: 0;
+        }
+        .toggle-switch:hover {
+            background: #bdc1c6;
+        }
+        .dark-mode .toggle-switch {
+            background: #1a73e8;
+        }
+        .dark-mode .toggle-switch:hover {
+            background: #1765cc;
+        }
+        .toggle-slider {
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 26px;
+            height: 26px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .dark-mode .toggle-slider {
+            transform: translateX(26px);
+        }
+        .header {
+            text-align: center;
+            color: #202124;
+            margin-bottom: 1rem;
+            transition: color 0.3s ease;
+        }
+        .dark-mode .header {
+            color: #e8eaed;
+        }
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 400;
+            color: #202124;
+            transition: color 0.3s ease;
+        }
+        .dark-mode .header h1 {
+            color: #e8eaed;
+        }
+        .header p {
+            color: #5f6368;
+            font-size: 1rem;
+            transition: color 0.3s ease;
+        }
+        .dark-mode .header p {
+            color: #9aa0a6;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+            transition: all 0.3s ease;
+            transform: translateY(0);
+        }
+        .dark-mode .card {
+            background: #292a2d;
+            box-shadow: 0 1px 2px 0 rgba(0,0,0,0.3), 0 1px 3px 1px rgba(0,0,0,0.15);
+        }
+        .card:hover {
+            box-shadow: 0 4px 8px 0 rgba(60,64,67,0.3), 0 6px 12px 4px rgba(60,64,67,0.15);
+            transform: translateY(-4px);
+        }
+        .dark-mode .card:hover {
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.4), 0 6px 12px 4px rgba(0,0,0,0.2);
+        }
+        .card h2 {
+            color: #202124;
+            margin-bottom: 1.5rem;
+            font-size: 1.375rem;
+            font-weight: 400;
+            transition: color 0.3s ease;
+        }
+        .dark-mode .card h2 {
+            color: #e8eaed;
+        }
+        .input-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #5f6368;
+            font-weight: 400;
+            font-size: 0.875rem;
+            transition: color 0.3s ease;
+        }
+        .dark-mode label {
+            color: #9aa0a6;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #dadce0;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: 'Roboto', 'Arial', sans-serif;
+            background: white;
+            color: #202124;
+        }
+        .dark-mode input[type="text"] {
+            background: #3c4043;
+            border-color: #5f6368;
+            color: #e8eaed;
+        }
+        input[type="text"]:hover {
+            border-color: #202124;
+        }
+        .dark-mode input[type="text"]:hover {
+            border-color: #9aa0a6;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #1a73e8;
+            box-shadow: 0 0 0 1px #1a73e8;
+        }
+        button {
+            width: 100%;
+            padding: 0.625rem 1.5rem;
+            background: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: none;
+            letter-spacing: 0.25px;
+            transform: scale(1);
+        }
+        button:hover {
+            background: #1765cc;
+            box-shadow: 0 2px 4px 0 rgba(60,64,67,0.3), 0 4px 8px 2px rgba(60,64,67,0.15);
+            transform: scale(1.02);
+        }
+        button:active {
+            background: #1557b0;
+            transform: scale(0.98);
+        }
+        .message {
+            margin-top: 1.5rem;
+            padding: 1.25rem;
+            background: linear-gradient(135deg, #e8f0fe 0%, #d2e3fc 100%);
+            background-size: 200% 200%;
+            border-left: 4px solid #1a73e8;
+            border-radius: 8px;
+            color: #202124;
+            line-height: 1.6;
+            font-size: 0.938rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            animation: slideInBounce 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55), 
+                       glow 2s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
+        }
+        .dark-mode .message {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2a4a75 100%);
+            background-size: 200% 200%;
+            color: #e8eaed;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideInBounce {
+            0% { 
+                opacity: 0; 
+                transform: translateX(-100px) rotate(-5deg) scale(0.8);
+            }
+            60% { 
+                opacity: 1; 
+                transform: translateX(10px) rotate(2deg) scale(1.05);
+            }
+            80% {
+                transform: translateX(-5px) rotate(-1deg) scale(0.98);
+            }
+            100% { 
+                opacity: 1; 
+                transform: translateX(0) rotate(0deg) scale(1);
+            }
+        }
+        @keyframes glow {
+            0%, 100% { 
+                box-shadow: 0 0 5px rgba(26, 115, 232, 0.3);
+            }
+            50% { 
+                box-shadow: 0 0 20px rgba(26, 115, 232, 0.6), 0 0 30px rgba(26, 115, 232, 0.4);
+            }
+        }
+        .info-card {
+            background: #f8f9fa;
+            color: #202124;
+            border: 1px solid #dadce0;
+            transition: all 0.3s ease;
+        }
+        .dark-mode .info-card {
+            background: #292a2d;
+            border-color: #5f6368;
+        }
+        .info-card h2 {
+            color: #202124;
+        }
+        .dark-mode .info-card h2 {
+            color: #e8eaed;
+        }
+        .info-card p {
+            line-height: 1.8;
+            margin-bottom: 1rem;
+            color: #5f6368;
+            transition: color 0.3s ease;
+        }
+        .dark-mode .info-card p {
+            color: #9aa0a6;
+        }
+        .tech-badge {
+            display: inline-block;
+            background: #e8f0fe;
+            color: #1a73e8;
+            padding: 0.5rem 1rem;
+            border-radius: 16px;
+            margin: 0.25rem;
+            font-size: 0.813rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+        .tech-badge:hover {
+            background: #d2e3fc;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 4px rgba(26, 115, 232, 0.2);
+        }
+        .dark-mode .tech-badge {
+            background: #1e3a5f;
+            color: #8ab4f8;
+        }
+        .dark-mode .tech-badge:hover {
+            background: #2a4a75;
+            box-shadow: 0 2px 4px rgba(138, 180, 248, 0.2);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            .container {
+                grid-template-columns: 1fr;
+            }
+            .toggle-switch {
+                width: 50px;
+                height: 28px;
+            }
+            .toggle-slider {
+                width: 22px;
+                height: 22px;
+                top: 3px;
+                left: 3px;
+            }
+            .dark-mode .toggle-slider {
+                transform: translateX(22px);
+            }
+            .toggle-label {
+                font-size: 0.65rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="header">
+            <h1>✨ Vue.js App Deployed on Azure ✨</h1>
+            <p>Your daily dose of inspiration and nature</p>
+        </div>
+
+        <div class="dark-mode-toggle">
+            <button class="toggle-switch" @click="toggleDarkMode" :title="darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'">
+                <span class="toggle-slider"></span>
+            </button>
+            <span class="toggle-label">{{ darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode' }}</span>
+        </div>
+
+        <div class="container">
+            <!-- Feature 1: Motivational Message Generator -->
+            <div class="card">
+                <h2>💪 Get Motivated</h2>
+                <div class="input-group">
+                    <label for="nameInput">Type your name:</label>
+                    <input 
+                        type="text" 
+                        id="nameInput" 
+                        v-model="userName" 
+                        placeholder="Enter your name..."
+                        @keyup.enter="generateMessage"
+                    >
+                </div>
+                <button @click="generateMessage">Generate Motivation</button>
+                <div v-if="motivationalMessage" class="message">
+                    {{ motivationalMessage }}
+                </div>
+            </div>
+
+            <!-- Feature 2: About Section -->
+            <div class="card info-card">
+                <h2>ℹ️ About This App</h2>
+                <p>This interactive application is proudly deployed on <strong>Microsoft Azure</strong>, leveraging cloud infrastructure for reliable and scalable performance.</p>
+                <p>Built with modern web technologies:</p>
+                <div>
+                    <span class="tech-badge">Vue.js</span>
+                    <span class="tech-badge">Azure Cloud</span>
+                    <span class="tech-badge">Responsive Design</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+
+        createApp({
+            data() {
+                return {
+                    userName: '',
+                    motivationalMessage: '',
+                    darkMode: true,
+                    motivationalQuotes: [
+                        "You are capable of amazing things! Your potential is limitless. 🌟",
+                        "Every day is a new opportunity to grow and shine. You've got this! ✨",
+                        "Believe in yourself! You have the strength to overcome any challenge. 💪",
+                        "Your journey is unique and beautiful. Keep moving forward! 🚀",
+                        "You are making a difference just by being you. Stay amazing! 🌈",
+                        "Success is not final, failure is not fatal. Your courage to continue is what counts! 🔥",
+                        "You are stronger than you think and braver than you believe! 🦁",
+                        "The world is better with you in it. Keep spreading your light! 💫",
+                        "Your dreams are valid and achievable. Keep pushing forward! 🎯",
+                        "You have everything within you to succeed. Trust yourself! 🌺"
+                    ]
+                }
+            },
+            mounted() {
+                // Set dark mode by default on page load
+                document.body.classList.add('dark-mode');
+            },
+            methods: {
+                generateMessage() {
+                    if (this.userName.trim()) {
+                        // Special message for Manu
+                        if (this.userName.trim().toLowerCase() === 'manu') {
+                            const manuCompliments = [
+                                "Manu, you are absolutely incredible! Your brilliance lights up every room you enter. ✨💖",
+                                "Manu, you have such a wonderful presence! Your kindness and intelligence are truly inspiring. 🌟💫",
+                                "Manu, you're amazing! Your creativity and passion make the world a better place. 🎨🌈",
+                                "Manu, you are one of a kind! Your strength and grace are absolutely remarkable. 💪🌺",
+                                "Manu, you're exceptional! Your positive energy and beautiful spirit brighten everyone's day. ☀️😊",
+                                "Manu, you are truly special! Your talent and determination are absolutely admirable. 🏆🌟",
+                                "Manu, you're wonderful! Your smile and warmth bring joy to everyone around you. 😄💝",
+                                "Manu, you are extraordinary! Your compassion and wisdom make you truly unique. 🦋💎"
+                            ];
+                            this.motivationalMessage = manuCompliments[Math.floor(Math.random() * manuCompliments.length)];
+                        } else {
+                            const randomQuote = this.motivationalQuotes[Math.floor(Math.random() * this.motivationalQuotes.length)];
+                            this.motivationalMessage = `Hey ${this.userName}! ${randomQuote}`;
+                        }
+                    } else {
+                        this.motivationalMessage = 'Please enter your name to receive a personalized motivational message! 😊';
+                    }
+                },
+                toggleDarkMode() {
+                    this.darkMode = !this.darkMode;
+                    if (this.darkMode) {
+                        document.body.classList.add('dark-mode');
+                    } else {
+                        document.body.classList.remove('dark-mode');
+                    }
+                }
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
